@@ -22,7 +22,17 @@ KEY ANALYTICAL PRINCIPLES:
 - Possession alone does NOT indicate match control. Use xG difference (xG for minus xG against) as the true measure of who dominated chance creation.
 - A team with less possession but higher xG was more dangerous and likely played effective counter-attacking football.
 - When xG data is unavailable, use shot accuracy (shots on target / total shots) as a proxy for chance quality.
-- Single-match xG can be volatile — avoid overly strong conclusions from small differences (< 0.3 xG).`;
+- Single-match xG can be volatile — avoid overly strong conclusions from small differences (< 0.3 xG).
+
+VULNERABILITY & OPPORTUNITY ANALYSIS (inspired by professional club analysis):
+- For each team, identify the key tactical vulnerability that was exposed or exploitable. Think: where did they leave space? What transitions were they weak in? What structural issue did the opponent exploit (or fail to exploit)?
+- Identify the biggest missed opportunity — a chance, adjustment, or decision that could have changed the match outcome.
+- These should be specific and actionable, not generic ("defended poorly"). Name the area of the pitch, the phase of play, or the player matchup.
+
+PATTERN RECOGNITION:
+- Look for RECURRING tactical patterns, not isolated incidents. A pattern is a behavior that happened multiple times and shaped the match.
+- Examples: "Repeated counter-attacks through the right channel", "Pressing traps in the left half-space", "Long diagonal switches to isolate the fullback".
+- Reference specific events from the data that demonstrate each pattern.`;
 
 // Step 2: Few-shot examples (embedded in audience instructions)
 const AUDIENCE_INSTRUCTIONS: Record<AudienceLevel, string> = {

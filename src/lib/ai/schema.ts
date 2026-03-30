@@ -56,6 +56,48 @@ export const AnalysisResultSchema = z.object({
       "Who created better chances? Was anyone clinical or wasteful? " +
       "If xG data is unavailable, use shot data to infer chance quality and state the limitation."
     ),
+  vulnerabilities: z.object({
+    home: z
+      .string()
+      .describe(
+        "1-2 sentences on the home team's key tactical vulnerability that was exposed or could have been exploited. " +
+        "E.g., 'High defensive line left space behind for counter-attacks' or 'Weak pressing in midfield transition allowed easy progression.'"
+      ),
+    away: z
+      .string()
+      .describe(
+        "1-2 sentences on the away team's key tactical vulnerability."
+      ),
+    missedOpportunities: z
+      .string()
+      .describe(
+        "1-2 sentences on the biggest missed opportunity in the match — a chance, tactical adjustment, or substitution " +
+        "that could have changed the outcome. Be specific about what should have happened differently."
+      ),
+  }),
+  patterns: z
+    .array(
+      z.object({
+        name: z
+          .string()
+          .describe("Short pattern label, e.g. 'Counter-attack through right channel'"),
+        description: z
+          .string()
+          .describe(
+            "2-3 sentences describing a recurring tactical pattern observed in the match. " +
+            "Reference specific events or phases of play that demonstrate the pattern."
+          ),
+        frequency: z
+          .enum(["isolated", "recurring", "dominant"])
+          .describe("How often this pattern appeared in the match"),
+      })
+    )
+    .min(1)
+    .max(3)
+    .describe(
+      "1-3 recurring tactical patterns observed in the match — not individual moments, " +
+      "but repeated behaviors or strategies that shaped how the game played out."
+    ),
   keyMoments: z
     .array(KeyMomentSchema)
     .min(2)

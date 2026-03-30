@@ -63,6 +63,63 @@ export function AnalysisView({ analysis }: { analysis: Analysis }) {
         <p className="text-sm">{result.xgStory}</p>
       </section>
 
+      {/* Vulnerabilities */}
+      <section className="rounded-lg border border-red-200 dark:border-red-900/40 bg-red-50/50 dark:bg-red-950/20 p-6 space-y-4">
+        <h3 className="text-lg font-semibold">Vulnerabilities & Missed Opportunities</h3>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <h4 className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
+              Home Team Weakness
+            </h4>
+            <p className="text-sm">{result.vulnerabilities.home}</p>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
+              Away Team Weakness
+            </h4>
+            <p className="text-sm">{result.vulnerabilities.away}</p>
+          </div>
+        </div>
+        <div>
+          <h4 className="text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">
+            Missed Opportunity
+          </h4>
+          <p className="text-sm">{result.vulnerabilities.missedOpportunities}</p>
+        </div>
+      </section>
+
+      {/* Tactical Patterns */}
+      <section>
+        <h3 className="text-lg font-semibold mb-3">Tactical Patterns</h3>
+        <div className="space-y-3">
+          {result.patterns.map((pattern, i) => {
+            const freqColors = {
+              isolated: "bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400",
+              recurring: "bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400",
+              dominant: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
+            };
+            return (
+              <div
+                key={i}
+                className="rounded-lg border border-gray-200 dark:border-gray-800 p-4"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <h4 className="font-medium text-sm">{pattern.name}</h4>
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded ${freqColors[pattern.frequency]}`}
+                  >
+                    {pattern.frequency}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {pattern.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
       {/* Key Moments */}
       <section>
         <h3 className="text-lg font-semibold mb-3">Key Moments</h3>
