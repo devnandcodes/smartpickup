@@ -168,12 +168,13 @@ export function AnalysisView({ analysis }: { analysis: Analysis }) {
         </div>
       </section>
 
-      {/* Caveats — minimal footer */}
-      {result.confidence.caveats.length > 0 && (
-        <footer className="text-xs text-gray-400 border-t border-gray-200 dark:border-gray-800 pt-3">
-          {result.confidence.caveats.join(" · ")}
-        </footer>
-      )}
+      {/* Footer — attribution + caveats */}
+      <footer className="text-xs text-gray-400 border-t border-gray-200 dark:border-gray-800 pt-3 space-y-1">
+        <p>AI-generated analysis powered by SmartPickup. Based on match data — not a substitute for professional judgment.</p>
+        {result.confidence.caveats.length > 0 && (
+          <p>{result.confidence.caveats.join(" · ")}</p>
+        )}
+      </footer>
     </div>
   );
 }
