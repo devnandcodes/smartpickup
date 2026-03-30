@@ -4,172 +4,175 @@ import { KeyMoment } from "./KeyMoment";
 export function AnalysisView({ analysis }: { analysis: Analysis }) {
   const { result } = analysis;
 
+  const freqColors = {
+    isolated: "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+    recurring: "bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400",
+    dominant: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
+  };
+
   return (
     <div className="space-y-6">
-      {/* Headline */}
+      {/* Headline + Quick Take — THE priority */}
       <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-6">
         <h2 className="text-xl font-bold">{result.headline}</h2>
-        <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+        <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 mb-4">
           <span className="capitalize">{analysis.audienceLevel}</span>
-          <span>-</span>
+          <span>·</span>
           <span>{analysis.mode.replace("_", " ")}</span>
           {result.confidence.level !== "high" && (
             <>
-              <span>-</span>
+              <span>·</span>
               <span className="text-yellow-500">
                 {result.confidence.level} confidence
               </span>
             </>
           )}
         </div>
+        <ul className="space-y-2">
+          {result.quickTake.map((bullet, i) => (
+            <li key={i} className="flex gap-2 text-sm">
+              <span className="text-gray-400 font-bold shrink-0">→</span>
+              <span>{bullet}</span>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* Match Narrative */}
+      {/* Match Narrative — expandable depth */}
       <section>
-        <h3 className="text-lg font-semibold mb-3">Match Story</h3>
-        <div className="prose prose-sm dark:prose-invert max-w-none">
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          Match Story
+        </h3>
+        <div className="text-sm space-y-3">
           {result.matchNarrative.split("\n\n").map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
       </section>
 
-      {/* Tactical Summary */}
-      <section className="rounded-lg border border-gray-200 dark:border-gray-800 p-6 space-y-4">
-        <h3 className="text-lg font-semibold">Tactical Breakdown</h3>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500 mb-1">
-            Home Team Approach
-          </h4>
-          <p className="text-sm">{result.tacticalSummary.homeTeamApproach}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500 mb-1">
-            Away Team Approach
-          </h4>
-          <p className="text-sm">{result.tacticalSummary.awayTeamApproach}</p>
-        </div>
-        <div>
-          <h4 className="text-sm font-medium text-gray-500 mb-1">
-            Key Battle
-          </h4>
-          <p className="text-sm">{result.tacticalSummary.keyBattle}</p>
-        </div>
-      </section>
+      {/* Two-column: Tactical + xG */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <section className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            Tactics
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div>
+              <span className="font-medium">Home: </span>
+              {result.tacticalSummary.homeTeamApproach}
+            </div>
+            <div>
+              <span className="font-medium">Away: </span>
+              {result.tacticalSummary.awayTeamApproach}
+            </div>
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+              <span className="font-medium">Key battle: </span>
+              {result.tacticalSummary.keyBattle}
+            </div>
+          </div>
+        </section>
 
-      {/* xG Story */}
-      <section className="rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-        <h3 className="text-lg font-semibold mb-2">The xG Story</h3>
-        <p className="text-sm">{result.xgStory}</p>
-      </section>
+        <section className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+            xG Story
+          </h3>
+          <p className="text-sm">{result.xgStory}</p>
+        </section>
+      </div>
 
-      {/* Vulnerabilities */}
-      <section className="rounded-lg border border-red-200 dark:border-red-900/40 bg-red-50/50 dark:bg-red-950/20 p-6 space-y-4">
-        <h3 className="text-lg font-semibold">Vulnerabilities & Missed Opportunities</h3>
-        <div className="grid gap-4 sm:grid-cols-2">
+      {/* Vulnerabilities — compact risk card */}
+      <section className="rounded-lg border border-red-200 dark:border-red-900/30 bg-red-50/30 dark:bg-red-950/10 p-4">
+        <h3 className="text-sm font-semibold text-red-600 dark:text-red-400 uppercase tracking-wide mb-3">
+          Vulnerabilities
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2 text-sm mb-3">
           <div>
-            <h4 className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
-              Home Team Weakness
-            </h4>
-            <p className="text-sm">{result.vulnerabilities.home}</p>
+            <span className="font-medium">Home: </span>
+            {result.vulnerabilities.home}
           </div>
           <div>
-            <h4 className="text-sm font-medium text-red-600 dark:text-red-400 mb-1">
-              Away Team Weakness
-            </h4>
-            <p className="text-sm">{result.vulnerabilities.away}</p>
+            <span className="font-medium">Away: </span>
+            {result.vulnerabilities.away}
           </div>
         </div>
-        <div>
-          <h4 className="text-sm font-medium text-amber-600 dark:text-amber-400 mb-1">
-            Missed Opportunity
-          </h4>
-          <p className="text-sm">{result.vulnerabilities.missedOpportunities}</p>
+        <div className="text-sm pt-2 border-t border-red-200/50 dark:border-red-900/20">
+          <span className="font-medium text-amber-600 dark:text-amber-400">
+            Missed opportunity:{" "}
+          </span>
+          {result.vulnerabilities.missedOpportunity}
         </div>
       </section>
 
-      {/* Tactical Patterns */}
+      {/* Patterns — inline badges */}
       <section>
-        <h3 className="text-lg font-semibold mb-3">Tactical Patterns</h3>
-        <div className="space-y-3">
-          {result.patterns.map((pattern, i) => {
-            const freqColors = {
-              isolated: "bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400",
-              recurring: "bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400",
-              dominant: "bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400",
-            };
-            return (
-              <div
-                key={i}
-                className="rounded-lg border border-gray-200 dark:border-gray-800 p-4"
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <h4 className="font-medium text-sm">{pattern.name}</h4>
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded ${freqColors[pattern.frequency]}`}
-                  >
-                    {pattern.frequency}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {pattern.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* Key Moments */}
-      <section>
-        <h3 className="text-lg font-semibold mb-3">Key Moments</h3>
-        <div className="space-y-3">
-          {result.keyMoments.map((moment, index) => (
-            <KeyMoment key={index} moment={moment} index={index} />
-          ))}
-        </div>
-      </section>
-
-      {/* Stats Insight */}
-      <section className="rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-        <h3 className="text-lg font-semibold mb-2">Stats Insight</h3>
-        <p className="text-sm">{result.statsInsight}</p>
-      </section>
-
-      {/* Player Ratings */}
-      <section>
-        <h3 className="text-lg font-semibold mb-3">Player Ratings</h3>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {result.playerRatings.map((player, i) => (
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Tactical Patterns
+        </h3>
+        <div className="space-y-2">
+          {result.patterns.map((pattern, i) => (
             <div
               key={i}
-              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-800 p-3"
+              className="rounded-lg border border-gray-200 dark:border-gray-800 p-3 flex gap-3 items-start"
             >
-              <span className="text-2xl font-bold tabular-nums w-10 text-center">
-                {player.rating}
+              <span
+                className={`text-xs px-2 py-0.5 rounded shrink-0 mt-0.5 ${freqColors[pattern.frequency]}`}
+              >
+                {pattern.frequency}
               </span>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm">{player.name}</p>
-                <p className="text-xs text-gray-500">{player.team}</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  {player.rationale}
-                </p>
+              <div className="text-sm">
+                <span className="font-medium">{pattern.name}: </span>
+                {pattern.description}
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Confidence Caveats */}
+      {/* Key Moments — timeline */}
+      <section>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Key Moments
+        </h3>
+        <div className="space-y-2">
+          {result.keyMoments.map((moment, index) => (
+            <KeyMoment key={index} moment={moment} index={index} />
+          ))}
+        </div>
+      </section>
+
+      {/* Player Ratings — compact grid */}
+      <section>
+        <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
+          Standout Performers
+        </h3>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {result.playerRatings.map((player, i) => (
+            <div
+              key={i}
+              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-800 p-3"
+            >
+              <span className="text-xl font-bold tabular-nums w-8 text-center">
+                {player.rating}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm">
+                  {player.name}{" "}
+                  <span className="text-xs text-gray-500 font-normal">
+                    {player.team}
+                  </span>
+                </p>
+                <p className="text-xs text-gray-400">{player.rationale}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Caveats — minimal footer */}
       {result.confidence.caveats.length > 0 && (
-        <section className="text-xs text-gray-400 border-t border-gray-200 dark:border-gray-800 pt-4">
-          <p className="font-medium mb-1">Analysis caveats:</p>
-          <ul className="list-disc pl-4 space-y-1">
-            {result.confidence.caveats.map((caveat, i) => (
-              <li key={i}>{caveat}</li>
-            ))}
-          </ul>
-        </section>
+        <footer className="text-xs text-gray-400 border-t border-gray-200 dark:border-gray-800 pt-3">
+          {result.confidence.caveats.join(" · ")}
+        </footer>
       )}
     </div>
   );

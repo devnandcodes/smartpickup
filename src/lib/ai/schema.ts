@@ -8,8 +8,8 @@ export const KeyMomentSchema = z.object({
   description: z
     .string()
     .describe(
-      "2-4 sentence explanation of what happened and why it mattered tactically. " +
-      "Go beyond describing the event — explain the tactical context that created it."
+      "1-2 sentence explanation of what happened and WHY it mattered. " +
+      "Tactical context, not just play-by-play."
     ),
   impact: z
     .enum(["low", "medium", "high"])
@@ -19,99 +19,105 @@ export const KeyMomentSchema = z.object({
     .describe("Player names involved in this moment"),
 });
 
+export const TacticalPatternSchema = z.object({
+  name: z
+    .string()
+    .describe("Short pattern label, e.g. 'Counter-attack through right channel'"),
+  description: z
+    .string()
+    .describe(
+      "1-2 sentences describing the pattern and referencing specific events that demonstrate it."
+    ),
+  frequency: z
+    .enum(["isolated", "recurring", "dominant"])
+    .describe("How often this pattern appeared"),
+});
+
 export const AnalysisResultSchema = z.object({
+  // --- TOP PRIORITY: Quick Take (the "bench comments") ---
   headline: z
     .string()
     .describe(
       "One-sentence match summary, newspaper-headline style, max 120 characters"
     ),
+  quickTake: z
+    .array(z.string())
+    .min(2)
+    .max(4)
+    .describe(
+      "2-4 bullet points — the most important takeaways from the match. " +
+      "Each bullet is one concise sentence. Ordered by importance. " +
+      "A reader who only sees these bullets should understand the match. " +
+      "Think: 'the 3 things to tell the bench at half-time.'"
+    ),
+
+  // --- NARRATIVE: Expandable depth ---
   matchNarrative: z
     .string()
     .describe(
-      "3-5 paragraph story of the match: how it unfolded, turning points, final outcome. " +
-      "Written for the specified audience level. Weave in statistical context naturally — " +
-      "don't just list numbers, explain what they mean for the story."
+      "2-3 paragraph story of the match. Keep it tight — no filler. " +
+      "Weave in stats naturally. Written for the specified audience level."
     ),
+
+  // --- TACTICAL: Structured for scanning ---
   tacticalSummary: z.object({
     homeTeamApproach: z
       .string()
-      .describe(
-        "2-3 sentences on the home team's tactical approach and how well it worked"
-      ),
+      .describe("1-2 sentences on the home team's approach and whether it worked"),
     awayTeamApproach: z
       .string()
-      .describe(
-        "2-3 sentences on the away team's tactical approach and how well it worked"
-      ),
+      .describe("1-2 sentences on the away team's approach and whether it worked"),
     keyBattle: z
       .string()
-      .describe(
-        "The most important tactical battle or matchup in the game and who won it"
-      ),
+      .describe("One sentence on the decisive matchup and who won it"),
   }),
+
+  // --- xG: Data story ---
   xgStory: z
     .string()
     .describe(
-      "2-3 sentences explaining the xG narrative: did the scoreline reflect the balance of play? " +
+      "1-2 sentences: did the scoreline reflect the balance of play? " +
       "Who created better chances? Was anyone clinical or wasteful? " +
-      "If xG data is unavailable, use shot data to infer chance quality and state the limitation."
+      "If xG unavailable, use shot data and state the limitation."
     ),
+
+  // --- VULNERABILITIES: Risk/opportunity ---
   vulnerabilities: z.object({
     home: z
       .string()
       .describe(
-        "1-2 sentences on the home team's key tactical vulnerability that was exposed or could have been exploited. " +
-        "E.g., 'High defensive line left space behind for counter-attacks' or 'Weak pressing in midfield transition allowed easy progression.'"
+        "One sentence on the home team's key exposed weakness. " +
+        "Be specific: name the area, phase of play, or player matchup."
       ),
     away: z
       .string()
-      .describe(
-        "1-2 sentences on the away team's key tactical vulnerability."
-      ),
-    missedOpportunities: z
+      .describe("One sentence on the away team's key exposed weakness."),
+    missedOpportunity: z
       .string()
       .describe(
-        "1-2 sentences on the biggest missed opportunity in the match — a chance, tactical adjustment, or substitution " +
-        "that could have changed the outcome. Be specific about what should have happened differently."
+        "One sentence on the biggest missed opportunity that could have changed the result."
       ),
   }),
+
+  // --- PATTERNS: Recurring behaviors ---
   patterns: z
-    .array(
-      z.object({
-        name: z
-          .string()
-          .describe("Short pattern label, e.g. 'Counter-attack through right channel'"),
-        description: z
-          .string()
-          .describe(
-            "2-3 sentences describing a recurring tactical pattern observed in the match. " +
-            "Reference specific events or phases of play that demonstrate the pattern."
-          ),
-        frequency: z
-          .enum(["isolated", "recurring", "dominant"])
-          .describe("How often this pattern appeared in the match"),
-      })
-    )
+    .array(TacticalPatternSchema)
     .min(1)
     .max(3)
     .describe(
-      "1-3 recurring tactical patterns observed in the match — not individual moments, " +
-      "but repeated behaviors or strategies that shaped how the game played out."
+      "1-3 recurring tactical patterns — repeated behaviors, not isolated incidents."
     ),
+
+  // --- KEY MOMENTS: Timeline ---
   keyMoments: z
     .array(KeyMomentSchema)
     .min(2)
-    .max(6)
+    .max(5)
     .describe(
-      "The 2-6 most important moments of the match, ordered chronologically"
+      "2-5 pivotal moments, ordered chronologically. Only include moments that shifted the match."
     ),
-  statsInsight: z
-    .string()
-    .describe(
-      "2-3 sentences interpreting the key stats. Focus on what the numbers reveal BEYOND the scoreline. " +
-      "Use the pre-analyzed statistical context provided. " +
-      "If a stat is null/unavailable, do not fabricate it."
-    ),
+
+  // --- PLAYER RATINGS: Top performers ---
   playerRatings: z
     .array(
       z.object({
@@ -121,27 +127,25 @@ export const AnalysisResultSchema = z.object({
         rationale: z
           .string()
           .describe(
-            "One sentence justification. Reward tactical contribution, " +
-            "not just goals — a midfielder who controlled tempo or a defender " +
-            "who neutralized threats deserves recognition."
+            "One sentence. Reward tactical contribution, not just goals."
           ),
       })
     )
     .min(2)
-    .max(6)
-    .describe("2-6 standout player ratings (best and worst performers)"),
+    .max(4)
+    .describe("2-4 standout performers only — best and worst."),
+
+  // --- META ---
   confidence: z.object({
     level: z
       .enum(["high", "medium", "low"])
-      .describe("How confident the analysis is based on data completeness"),
+      .describe("Confidence based on data completeness"),
     caveats: z
       .array(z.string())
-      .describe(
-        "List of caveats, e.g. 'xG data unavailable', 'limited event data', " +
-        "'single-match xG — small sample size'"
-      ),
+      .describe("Data gaps, e.g. 'xG unavailable', 'limited event data'"),
   }),
 });
 
 export type AnalysisResult = z.infer<typeof AnalysisResultSchema>;
 export type KeyMoment = z.infer<typeof KeyMomentSchema>;
+export type TacticalPattern = z.infer<typeof TacticalPatternSchema>;
