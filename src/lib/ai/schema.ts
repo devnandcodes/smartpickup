@@ -8,7 +8,8 @@ export const KeyMomentSchema = z.object({
   description: z
     .string()
     .describe(
-      "2-4 sentence explanation of what happened and why it mattered tactically"
+      "2-4 sentence explanation of what happened and why it mattered tactically. " +
+      "Go beyond describing the event — explain the tactical context that created it."
     ),
   impact: z
     .enum(["low", "medium", "high"])
@@ -27,7 +28,9 @@ export const AnalysisResultSchema = z.object({
   matchNarrative: z
     .string()
     .describe(
-      "3-5 paragraph story of the match: how it unfolded, turning points, final outcome. Written for the specified audience level."
+      "3-5 paragraph story of the match: how it unfolded, turning points, final outcome. " +
+      "Written for the specified audience level. Weave in statistical context naturally — " +
+      "don't just list numbers, explain what they mean for the story."
     ),
   tacticalSummary: z.object({
     homeTeamApproach: z
@@ -46,6 +49,13 @@ export const AnalysisResultSchema = z.object({
         "The most important tactical battle or matchup in the game and who won it"
       ),
   }),
+  xgStory: z
+    .string()
+    .describe(
+      "2-3 sentences explaining the xG narrative: did the scoreline reflect the balance of play? " +
+      "Who created better chances? Was anyone clinical or wasteful? " +
+      "If xG data is unavailable, use shot data to infer chance quality and state the limitation."
+    ),
   keyMoments: z
     .array(KeyMomentSchema)
     .min(2)
@@ -56,7 +66,9 @@ export const AnalysisResultSchema = z.object({
   statsInsight: z
     .string()
     .describe(
-      "2-3 sentences interpreting the key stats (possession, shots, xG if available). Explain what the numbers reveal about how the match played out. If a stat is null/unavailable, do not fabricate it."
+      "2-3 sentences interpreting the key stats. Focus on what the numbers reveal BEYOND the scoreline. " +
+      "Use the pre-analyzed statistical context provided. " +
+      "If a stat is null/unavailable, do not fabricate it."
     ),
   playerRatings: z
     .array(
@@ -64,7 +76,13 @@ export const AnalysisResultSchema = z.object({
         name: z.string(),
         team: z.string(),
         rating: z.number().min(1).max(10).describe("Rating out of 10"),
-        rationale: z.string().describe("One sentence justification"),
+        rationale: z
+          .string()
+          .describe(
+            "One sentence justification. Reward tactical contribution, " +
+            "not just goals — a midfielder who controlled tempo or a defender " +
+            "who neutralized threats deserves recognition."
+          ),
       })
     )
     .min(2)
@@ -77,7 +95,8 @@ export const AnalysisResultSchema = z.object({
     caveats: z
       .array(z.string())
       .describe(
-        "List of caveats, e.g. 'xG data unavailable', 'limited event data'"
+        "List of caveats, e.g. 'xG data unavailable', 'limited event data', " +
+        "'single-match xG — small sample size'"
       ),
   }),
 });

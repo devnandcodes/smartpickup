@@ -57,6 +57,12 @@ export function AnalysisView({ analysis }: { analysis: Analysis }) {
         </div>
       </section>
 
+      {/* xG Story */}
+      <section className="rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+        <h3 className="text-lg font-semibold mb-2">The xG Story</h3>
+        <p className="text-sm">{result.xgStory}</p>
+      </section>
+
       {/* Key Moments */}
       <section>
         <h3 className="text-lg font-semibold mb-3">Key Moments</h3>
